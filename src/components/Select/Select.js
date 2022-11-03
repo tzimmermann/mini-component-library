@@ -1,16 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 import { COLORS } from "../../constants";
 import Icon from "../Icon";
+import VisuallyHidden from "../VisuallyHidden";
 import { getDisplayedValue } from "./Select.helpers";
 
 const Select = ({ label, value, onChange, children }) => {
+  const [id] = useState(() => Date.now());
+
   const displayedValue = getDisplayedValue(value, children);
 
   return (
     <SelectWrapper>
-      <NativeSelectWrapper value={value} onChange={onChange}>
+      <VisuallyHidden>
+        <label htmlFor={id}>{label}</label>
+      </VisuallyHidden>
+      <NativeSelectWrapper id={id} value={value} onChange={onChange}>
         {children}
       </NativeSelectWrapper>
       <SelectedValue>{displayedValue}</SelectedValue>
@@ -39,6 +45,9 @@ const SelectWrapper = styled.div`
   }
 `;
 
+// The native <select> element is not visible, it is only here to capture click
+// events to trigger the native options overlay. The actual selected value is rendered
+// by `SelectedValue`.
 const NativeSelectWrapper = styled.select`
   position: absolute;
   top: 0;
